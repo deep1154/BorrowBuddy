@@ -1,0 +1,35 @@
+name: Build BorrowBuddy APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Flutter Project
+        run: |
+          unzip -o BorrowBuddy_GitHub_Ready.zip -d project
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install Dependencies
+        working-directory: project
+        run: flutter pub get
+
+      - name: Build APK
+        working-directory: project
+        run: flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: BorrowBuddy-APK
+          path: project/build/app/outputs/flutter-apk/app-debug.apk
